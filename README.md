@@ -1,4 +1,4 @@
-# new
+# Getting and Cleaning Data Course Project
 file_names1 <- c("subject_train.txt", "y_train.txt", "X_train.txt")
 file_names2 <- c("subject_test.txt", "y_test.txt", "X_test.txt" )
 
