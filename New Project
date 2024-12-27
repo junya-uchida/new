@@ -1,10 +1,5 @@
-#new
-if(!file.exists("./courseraproject")) {
-  dir.create("./courseraproject")}
-url <- "https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip"
-file <- "0Dataset.zip"
-download.file(url, file)
-unzip(zipfile = file)
+library(dplyr)
+library(tidyr)
 
 features <- read.table("features.txt", col.names = c("index", "feature"))
 activity_labels <- read.table("activity_labels.txt", col.names = c("activity_id", "activity"))
@@ -35,7 +30,7 @@ colnames(x_data) <- gsub("Mag", "Magnitude", colnames(x_data))
 colnames(x_data) <- gsub("BodyBody", "Body", colnames(x_data))  
 
 full <- cbind(subject_data, y_data$activity, x_data)
-colnames(full_data)[1:2] <- c("subject", "activity")
+colnames(full)[1:2] <- c("subject", "activity")
 
 tidy_data <- full %>%
   group_by(subject, activity) %>%
