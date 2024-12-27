@@ -1,0 +1,43 @@
+#new
+if(!file.exists("./courseraproject")) {
+  dir.create("./courseraproject")}
+url <- "https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip"
+file <- "0Dataset.zip"
+download.file(url, file)
+unzip(zipfile = file)
+
+features <- read.table("features.txt", col.names = c("index", "feature"))
+activity_labels <- read.table("activity_labels.txt", col.names = c("activity_id", "activity"))
+
+x_train <- read.table("X_train.txt")
+y_train <- read.table("y_train.txt")
+subject_train <- read.table("subject_train.txt")
+
+x_test <- read.table("X_test.txt")
+y_test <- read.table("y_test.txt")
+subject_test <- read.table("subject_test.txt")
+
+x_data <- rbind(x_train, x_test)
+y_data <- rbind(y_train, y_test)
+subject_data <- rbind(subject_train, subject_test)
+
+colnames(x_data) <- features$feature ###
+
+capture <- grep("mean\\(\\)|std\\(\\)", features$feature) ###
+x_data <- x_data[, capture]
+
+y_data$activity <- activity_labels$activity[y_data$V1]
+colnames(x_data) <- gsub("^t", "time", colnames(x_data)) 
+colnames(x_data) <- gsub("^f", "frequency", colnames(x_data))  
+colnames(x_data) <- gsub("Acc", "Accelerometer", colnames(x_data)) 
+colnames(x_data) <- gsub("Gyro", "Gyroscope", colnames(x_data))  
+colnames(x_data) <- gsub("Mag", "Magnitude", colnames(x_data)) 
+colnames(x_data) <- gsub("BodyBody", "Body", colnames(x_data))  
+
+full <- cbind(subject_data, y_data$activity, x_data)
+colnames(full_data)[1:2] <- c("subject", "activity")
+
+tidy_data <- full %>%
+  group_by(subject, activity) %>%
+  summarise_all(list(mean = ~mean(.)))
+write.table(tidy_data, "tidy_data_2.txt", row.names = FALSE)
